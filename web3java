@@ -1,0 +1,35 @@
+const Web3 = require('web3');
+
+// Connect to the network
+const web3 = new Web3('https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID');
+
+// Your account details
+const myAccount = 'YOUR_ADDRESS';
+const privateKey = Buffer.from('YOUR_PRIVATE_KEY', 'hex');
+
+// Token details
+const tokenContractAddress = 'TOKEN_CONTRACT_ADDRESS';
+const recipientAddress = 'RECIPIENT_ADDRESS';
+const amount = web3.utils.toHex(100);  // The amount of tokens to send
+
+// The ERC20 transfer ABI
+const transfer = web3.eth.abi.encodeFunctionCall({
+    name: 'transfer',
+    type: 'function',
+    inputs: [{
+        type: 'address',
+        name: 'recipient'
+    },{
+        type: 'uint256',
+        name: 'amount'
+    }]
+}, [recipientAddress, amount]);
+
+// Create and sign the transaction
+web3.eth.accounts.signTransaction({
+    to: tokenContractAddress,
+    data: transfer,
+}, privateKey, (error, signedTx) => {
+    if (error) console.error(error);
+    
+    // Send the transaction
